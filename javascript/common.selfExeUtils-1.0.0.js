@@ -26,6 +26,10 @@
                 return Object.prototype.toString.call(this.valueOf());
             }
         }
+        // 定义getType方法不能被枚举出来
+        Object.defineProperty(Object.prototype, "getType", {
+            enumerable : false
+        });
     }
 
     // String prototype Utils replaceAll
