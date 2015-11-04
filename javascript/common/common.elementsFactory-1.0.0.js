@@ -1,18 +1,18 @@
 /**
  * @Author pangcg@highsuccess.cn
- * @Description  创建HTML元素
+ * @Description  html 元素工厂
  * @Since 2015/11/3
  */
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define('htmlElementFactory', [''], factory);
+        define('elementFactory', [''], factory);
     } else if (typeof exports === 'object') {
         // Node/CommonJS style for Browserify
         module.exports = factory;
     } else {
         // Browser globals
-        htmlElementFactory = factory();
+        elementFactory = factory();
     }
 }(function () {
     //页面 html 元素 创建
@@ -53,7 +53,7 @@
      * @param parentElement
      * @returns {XML|Node}
      */
-    function append (insertElement, parentElement) {
+    function appendEle (insertElement, parentElement) {
         return parentElement.appendChild(insertElement);
     }
 
@@ -61,9 +61,10 @@
      * 在指定元素之前插入新元素
      * @param  insertElement
      * @param  beforeElement
-     * @param  parentElement
+     * @returns {XML|Node}
      */
-    function insertBeforeEle (insertElement, beforeElement, parentElement) {
+    function insertBeforeEle (insertElement, beforeElement) {
+        var parentElement = beforeElement.parentNode;
         return parentElement.insertBefore(insertElement, beforeElement);
     }
 
@@ -71,11 +72,23 @@
      * 在指定元素之后插入新元素
      * @param insertElement
      * @param afterElement
+     * @returns {XML|Node}
      */
-    function insertAfter(insertElement, afterElement, parentElement) {
+    function insertAfterEle(insertElement, afterElement) {
+        var parentElement = afterElement.parentNode;
+        if (parentElement.lastChild == afterElement) {
+            // 如果最后的节点是目标元素，则直接添加。因为默认是最后
+            return parentElement.appendChild(insertElement);
+        } else {
+            //如果不是，则插入在目标元素的下一个兄弟节点 的前面。也就是目标元素的后面
+            return parentElement.insertBefore(insertElement, afterElement.nextSibling);
+        }
     }
 
     return {
-        createElement: createElement
+        createElement: createElement,
+        appendEle : appendEle,
+        insertBeforeEle : insertBeforeEle,
+        insertAfterEle : insertAfterEle
     }
 }));
